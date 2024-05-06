@@ -1,8 +1,12 @@
-﻿namespace MultiTenant.AspNetCore.Tests
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace MultiTenant.AspNetCore.Tests
 {
     internal class TestTenant : ITenantInfo
     {
-        public required string Id { get; set; }
-        public required string Identifier { get; set; }
+        [Required]
+        public  string Id { get; set; }
+        [Required]
+        public string Identifier { get; set; }
     }
 }

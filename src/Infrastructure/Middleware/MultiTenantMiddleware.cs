@@ -13,11 +13,20 @@ namespace MultiTenant.AspNetCore.Infrastructure.Middleware
     /// <typeparam name="T"></typeparam>
     /// <param name="next"></param>
     /// <param name="configurePipeline"></param>
-    internal class MultiTenantMiddleware<T>(RequestDelegate next, IApplicationBuilder builder, Action<T, IApplicationBuilder> configurePipeline)
+    internal class MultiTenantMiddleware<T>
         where T : ITenantInfo
     {
+        public MultiTenantMiddleware(RequestDelegate next, IApplicationBuilder builder, Action<T, IApplicationBuilder> configurePipeline)
+        {
+            this.next = next;
+            this.builder = builder;
+            this.configurePipeline = configurePipeline;
+        }
         //Cache compiled pipelines
         private readonly ConcurrentDictionary<string, Lazy<RequestDelegate>> _pipelinesCache = new();
+        private readonly RequestDelegate next;
+        private readonly IApplicationBuilder builder;
+        private readonly Action<T, IApplicationBuilder> configurePipeline;
 
         /// <summary>
         /// Set the services for the tenant to be our specific tenant services

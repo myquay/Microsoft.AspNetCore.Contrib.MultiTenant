@@ -41,7 +41,7 @@
         /// <remarks>
         /// https://github.com/aspnet/HttpAbstractions/pull/1066
         /// </remarks>
-        private class TenantInfoHolder()
+        private class TenantInfoHolder
         {
             public W? Context;
         }

@@ -5,9 +5,13 @@ namespace MultiTenant.AspNetCore.Infrastructure.Strategies
     /// <summary>
     /// Resolve the host to a tenant identifier
     /// </summary>
-    internal class HostResolutionStrategy(IHttpContextAccessor httpContextAccessor) : ITenantResolutionStrategy
+    internal class HostResolutionStrategy : ITenantResolutionStrategy
     {
-        private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
+        public HostResolutionStrategy(IHttpContextAccessor httpContextAccessor)
+        {
+            _httpContextAccessor = httpContextAccessor;
+        }
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         /// <summary>
         /// Get the tenant identifier

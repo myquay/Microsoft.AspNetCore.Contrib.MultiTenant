@@ -8,12 +8,15 @@ namespace MultiTenant.AspNetCore.Infrastructure.Options
     /// </summary>
     /// <param name="multiTenantContextAccessor"></param>
     /// <exception cref="ArgumentNullException"></exception>
-    internal class MultiTenantOptionsCache<TOptions, T>(IMultiTenantContextAccessor<T> multiTenantContextAccessor) : IOptionsMonitorCache<TOptions>
+    internal class MultiTenantOptionsCache<TOptions, T> : IOptionsMonitorCache<TOptions>
         where TOptions : class where T : ITenantInfo
     {
-
-        private readonly IMultiTenantContextAccessor<T> multiTenantContextAccessor = multiTenantContextAccessor ??
+        public MultiTenantOptionsCache(IMultiTenantContextAccessor<T> multiTenantContextAccessor)
+        {
+            this.multiTenantContextAccessor = multiTenantContextAccessor ??
                                               throw new ArgumentNullException(nameof(multiTenantContextAccessor));
+        }
+        private readonly IMultiTenantContextAccessor<T> multiTenantContextAccessor;
         private readonly ConcurrentDictionary<string, IOptionsMonitorCache<TOptions>> tenantCaches = new();
 
         /// <summary>

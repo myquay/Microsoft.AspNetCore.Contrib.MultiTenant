@@ -9,11 +9,18 @@ namespace MultiTenant.AspNetCore.Infrastructure.DependencyInjection
     /// Factory for creating tenant specific service providers
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    internal class MultiTenantServiceProviderFactory<T>(IServiceCollection containerBuilder, Action<IServiceCollection, T?> tenantServiceConfiguration) where T : ITenantInfo
+    internal class MultiTenantServiceProviderFactory<T> where T : ITenantInfo
     {
-
+        
+        public MultiTenantServiceProviderFactory(IServiceCollection containerBuilder, Action<IServiceCollection, T?> tenantServiceConfiguration)
+        {
+            this.containerBuilder = containerBuilder;
+            this.tenantServiceConfiguration = tenantServiceConfiguration;
+        }
         //Cache compiled providers
         private readonly ConcurrentDictionary<string, Lazy<IServiceProvider>> CompiledProviders = new();
+        private readonly IServiceCollection containerBuilder;
+        private readonly Action<IServiceCollection, T?> tenantServiceConfiguration;
 
         public IServiceProvider GetServiceProviderForTenant(T tenant)
         {
@@ -36,9 +43,16 @@ namespace MultiTenant.AspNetCore.Infrastructure.DependencyInjection
     /// Factory wrapper for creating service scopes
     /// </summary>
     /// <param name="serviceProvider"></param>
-    internal class MultiTenantServiceScopeFactory<T>(MultiTenantServiceProviderFactory<T> ServiceProviderFactory, IMultiTenantContextAccessor<T> multiTenantContextAccessor) : IMultiTenantServiceScopeFactory where T : ITenantInfo
+    internal class MultiTenantServiceScopeFactory<T> : IMultiTenantServiceScopeFactory where T : ITenantInfo
     {
+        private readonly MultiTenantServiceProviderFactory<T> serviceProviderFactory;
+        private readonly IMultiTenantContextAccessor<T> multiTenantContextAccessor;
 
+        public MultiTenantServiceScopeFactory(MultiTenantServiceProviderFactory<T> ServiceProviderFactory, IMultiTenantContextAccessor<T> multiTenantContextAccessor)
+        {
+            serviceProviderFactory = ServiceProviderFactory;
+            this.multiTenantContextAccessor = multiTenantContextAccessor;
+        }
         /// <summary>
         /// Create scope
         /// </summary>
@@ -46,7 +60,7 @@ namespace MultiTenant.AspNetCore.Infrastructure.DependencyInjection
         public IServiceScope CreateScope()
         {
             var tenant = multiTenantContextAccessor.TenantInfo ?? throw new InvalidOperationException("Tenant context is not available");
-            return ServiceProviderFactory.GetServiceProviderForTenant(tenant).CreateScope();
+            return serviceProviderFactory.GetServiceProviderForTenant(tenant).CreateScope();
         }
     }
 }

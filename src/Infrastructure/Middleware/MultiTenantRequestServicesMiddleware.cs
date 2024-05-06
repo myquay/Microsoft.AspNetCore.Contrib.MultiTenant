@@ -10,12 +10,21 @@ namespace MultiTenant.AspNetCore.Infrastructure.Middleware
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="tenantServicesConfiguration"></param>
-    internal class MultiTenantRequestServicesMiddleware<T>(
+    internal class MultiTenantRequestServicesMiddleware<T> where T : ITenantInfo
+    {
+        private readonly RequestDelegate next;
+        private readonly IMultiTenantServiceScopeFactory multiTenantServiceProviderScopeFactory;
+        private readonly IHttpContextAccessor httpContextAccessor;
+
+        public MultiTenantRequestServicesMiddleware(
         RequestDelegate next, 
         IMultiTenantServiceScopeFactory multiTenantServiceProviderScopeFactory, 
-        IHttpContextAccessor httpContextAccessor) where T : ITenantInfo
-    {
-
+        IHttpContextAccessor httpContextAccessor)
+        {
+            this.next = next;
+            this.multiTenantServiceProviderScopeFactory = multiTenantServiceProviderScopeFactory;
+            this.httpContextAccessor = httpContextAccessor;
+        }
         /// <summary>
         /// Set the services for the tenant to be our specific tenant services
         /// </summary>

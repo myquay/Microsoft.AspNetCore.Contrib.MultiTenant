@@ -8,7 +8,7 @@ namespace MultiTenant.AspNetCore.Infrastructure.Middleware
     /// </summary>
     /// <param name="tenantServicesConfiguration">The tenant specific tenant services configuration.</param>
     /// <seealso cref="IStartupFilter" />
-    internal class MultitenantRequestServicesStartupFilter<T>() : IStartupFilter where T : ITenantInfo
+    internal class MultitenantRequestServicesStartupFilter<T> : IStartupFilter where T : ITenantInfo
     {
         /// <summary>
         /// Adds the multitenant request services middleware to the app pipeline.

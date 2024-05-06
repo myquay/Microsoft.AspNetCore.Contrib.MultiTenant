@@ -8,7 +8,7 @@ namespace MultiTenant.AspNetCore.Infrastructure.Middleware
     /// Register the multitenant context accessor middleware with the app pipeline.
     /// </summary>
     /// <seealso cref="IStartupFilter" />
-    internal class MultiTenantContextAccessorStartupFilter<T>() : IStartupFilter where T : ITenantInfo
+    internal class MultiTenantContextAccessorStartupFilter<T> : IStartupFilter where T : ITenantInfo
     {
         /// <summary>
         /// Adds the multitenant request services middleware to the app pipeline.
